@@ -42,7 +42,7 @@
         </UCard>
       </UModal>
     </div>
-    <div v-if="contents.length > 0" class="grid grid-cols-6 gap-4">
+    <div v-if="contents.length > 0" class="grid grid-cols-5 gap-4">
       <UCard v-for="content in contents" :key="content.id" 
         :ui="{
           body: {
@@ -50,12 +50,25 @@
           },
         }"
         class="cursor-pointer"
-        @click="openFolder(content)"
       >
-        <UnoIcon
-          :class="[content.children ? 'i-mdi-folder' : 'i-mdi-file-document-outline']" 
-        />
-        {{ content.name }}
+        <div class="flex flex-row justify-between">
+          <div
+             @click="openFolder(content)"
+          >
+            <UnoIcon
+              :class="[content.children ? 'i-mdi-folder' : 'i-mdi-file-document-outline']"
+            />
+            {{ content.name }}
+          </div>
+          <div>
+            <UButton
+              color="gray"
+              variant="ghost"
+              icon="i-mdi-delete"
+              @click="deleteFolder(content)"
+            />
+          </div>
+        </div>
       </UCard>
     </div>
     <div v-else-if="contents.length < 1 && selectedFolder">
@@ -111,6 +124,20 @@ const onSubmit = async (event) => {
     dataForm.name = null;
   } catch (error) {
     console.error('Error adding folders', error);
+  }
+}
+
+const deleteFolder = async (content) => {
+  try {
+    const type = content.files !== null ? 'folders' : 'files'
+    const response = await $fetch(`${config.public.apiEndpoint}/${type}/${content.id}`,{
+      method: 'DELETE',
+    });
+
+    props.selectedFolder.children = contents.value.filter((item) => item.id !== content.id);;
+
+  } catch (error) {
+    console.error('Error deleting folder / file', error);
   }
 }
 </script>
