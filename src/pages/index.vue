@@ -4,7 +4,7 @@
   </nav>
 
   <main class="bg-slate-200 w-full p-4 text-center text-gray-800">
-    <ViewFolder :selectedFolder="selectedFolder" />
+    <ViewFolder :selectedFolder="selectedFolder" @select-folder="selectFolder" />
   </main>
 </template>
 
