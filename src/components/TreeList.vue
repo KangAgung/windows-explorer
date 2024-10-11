@@ -1,7 +1,11 @@
 <template>
-  <ul class="folder-tree">
+  <ul>
     <li v-for="folder in folders" :key="folder.id">
-      <div class="py-2 text-gray-800 font-semibold w-full cursor-pointer hover:bg-slate-200" @click="toggleFolder(folder)">
+      <div 
+        class="py-2 text-gray-800 font-semibold w-full cursor-pointer"
+        :class="[folder.children ? 'hover:bg-slate-200' : '']"
+        @click="toggleFolder(folder)"
+      >
         <UnoIcon
           :class="[
             folder.isExpanded ? 'rotate-90' : 'rotate-0', 
@@ -13,7 +17,7 @@
         />
         {{ folder.name }}
       </div>
-      <FolderTree
+      <TreeList
         v-if="folder.isExpanded && folder.children?.length > 0"
         :folders="folder.children"
         @select-folder="$emit('select-folder', $event)"
@@ -31,6 +35,9 @@ defineProps({
 const emit = defineEmits(['select-folder']);
 
 const toggleFolder = (folder) => {
+  if (folder.children === null) {
+    return;
+  }
   if (!folder.hasOwnProperty('isExpanded')) {
     folder.isExpanded = false;
   }
